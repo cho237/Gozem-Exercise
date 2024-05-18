@@ -1,0 +1,65 @@
+<label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+<div class="relative">
+  <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+    <svg class="w-4 h-4 text-gray-500 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+         viewBox="0 0 20 20">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+    </svg>
+  </div>
+  <input name="search" [(ngModel)]="packageId" type="search" id="default-search"
+         class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 "
+         placeholder="Enter Package ID" required/>
+  <button (click)="onSeach()" type="button"
+          class="text-white absolute end-2.5 bottom-2.5 bg-green-700 hover:bg-opacity-50 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">
+    Track
+  </button>
+</div>
+
+@if (!loading && package) {
+  <div class="flex gap-2 mt-14">
+    <div class="w-2/5 flex flex-col gap-4">
+      <div class="border  p-2">
+        <p class="text-xl font-semibold">Package Details</p>
+        <div class="">
+          <p class="">id: <span class="text-gray-500 font-semibold">{{ package.package_id }}</span></p>
+          <p class=""> weight:<span class="text-gray-500 font-semibold">{{ package.weight }} kg</span></p>
+          <p class=""> width: <span class="text-gray-500 font-semibold">{{ package.width }} cm</span></p>
+          <p class=""> height: <span class="text-gray-500 font-semibold">{{ package.height }} cm</span></p>
+          <p class=""> depth: <span class="text-gray-500 font-semibold">{{ package.depth }} cm</span></p>
+          <p class=""> sender: <span class="text-gray-500 font-semibold">{{ package.from_name }}</span></p>
+          <p class=""> sender address: <span class="text-gray-500 font-semibold">{{ package.from_address }}</span></p>
+          <p class=""> receiver: <span class="text-gray-500 font-semibold">{{ package.to_name }}</span></p>
+          <p class=""> receiver address: <span class="text-gray-500 font-semibold">{{ package.to_address }}</span></p>
+        </div>
+
+      </div>
+      <div class="border p-2">
+        <p class="text-xl font-semibold">Delivery Details</p>
+        @if (package.active_delivery_id) {
+
+          <div class="">
+            <p class=""> id: <span
+              class="text-gray-500 font-semibold">{{ package.active_delivery_id.delivery_id }}</span></p>
+            <p class="">start time: <span
+              class="text-gray-500 font-semibold">{{ package.active_delivery_id.start_time | date: 'MMM d, y h:mm:ss a' }}</span>
+            </p>
+            <p class="">end time: <span
+              class="text-gray-500 font-semibold">{{ package.active_delivery_id.end_time | date: 'MMM d, y h:mm:ss a' }}</span>
+            </p>
+            <p class="">pick up time: <span
+              class="text-gray-500 font-semibold">{{ package.active_delivery_id.pickup_time | date: 'MMM d, y h:mm:ss a' }}</span>
+            </p>
+          </div>
+        } @else {
+          <p class="text-center">No Delivery information yet</p>
+        }
+
+
+      </div>
+    </div>
+    <div *ngIf="package.active_delivery_id" class="w-full border">map</div>
+  </div>
+}
+<p class="text-center p-4 " *ngIf="!loading && !package">{{ message }}</p>
+<mat-spinner *ngIf="loading" class=" mx-auto text-sm mt-4"></mat-spinner>

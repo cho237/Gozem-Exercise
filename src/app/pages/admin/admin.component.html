@@ -1,0 +1,324 @@
+<div class=" flex flex-col gap-8">
+  <div class="border p-4 ">
+    <div class="flex justify-between mb-5">
+      <p class="text-xl  font-semibold">Package List</p>
+      <button (click)="openAddPackageDialog(false)" type="button"
+              class="text-white bg-green-700 hover:bg-opacity-50  font-medium rounded-lg text-sm px-4 py-1 ">Create
+        Package
+      </button>
+    </div>
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+      @if(packages.length > 0){
+        <table class="w-full text-sm text-left rtl:text-right ">
+          <thead class="text-xs text-gray-700 uppercase ">
+          <tr>
+            <th scope="col" class="px-6 py-3">
+              Id
+            </th>
+            <th scope="col" class="px-6 py-3">
+              weight
+            </th>
+            <th scope="col" class="px-6 py-3">
+              width
+            </th>
+            <th scope="col" class="px-6 py-3">
+              sender name
+            </th>
+            <th scope="col" class="px-6 py-3">
+              sender address
+            </th>
+            <th scope="col" class="px-6 py-3">
+              receiver name
+            </th>
+            <th scope="col" class="px-6 py-3">
+              receiver address
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Actions
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (package of packages; track $index) {
+              <tr class="bg-white border-b ">
+                <td class="px-6 py-4">
+                  {{package.package_id}}
+                </td>
+                <td class="px-6 py-4">
+                  {{ package.weight }} <span>grams</span>
+                </td>
+                <td class="px-6 py-4">
+                  {{ package.width }} cm
+                </td>
+                <td class="px-6 py-4">
+                  {{ package.from_name }}
+                </td>
+                <td class="px-6 py-4">
+                  {{ package.from_address }}
+                </td>
+                <td class="px-6 py-4">
+                  {{ package.to_name }}
+                </td>
+                <td class="px-6 py-4">
+                  {{ package.to_address }}
+                </td>
+                <td class="px-6 py-4">
+                  <mat-icon class="cursor-pointer"  (click)="openAddPackageDialog(true, package)" title="edit package" aria-label="Example home icon" fontIcon="edit"></mat-icon>
+                  <mat-icon class="cursor-pointer" (click)="onDeletePackage(package.package_id)" color="warn" aria-hidden="false" title="delete package" aria-label="Example home icon" fontIcon="delete"></mat-icon>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }@else{
+      <p class="text-center">No Packages...</p>
+      }
+
+    </div>
+  </div>
+
+
+  <div class="border p-4 ">
+    <div class="flex justify-between mb-5">
+      <p class="text-xl  font-semibold">Delivery List</p>
+      <button (click)="openAddDeliveryDialog()" type="button"
+              class="text-white bg-green-700 hover:bg-opacity-50  font-medium rounded-lg text-sm px-4 py-1 ">Create
+        Delivery
+      </button>
+    </div>
+
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+      @if (deliveries.length > 0){
+        <table class="w-full text-sm text-left rtl:text-right ">
+          <thead class="text-xs text-gray-700 uppercase ">
+          <tr>
+            <th scope="col" class="px-6 py-3">
+              Id
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Package Id
+            </th>
+            <th scope="col" class="px-6 py-3">
+              start time
+            </th>
+            <th scope="col" class="px-6 py-3">
+              end time
+            </th>
+            <th scope="col" class="px-6 py-3">
+              pickup time
+            </th>
+            <th scope="col" class="px-6 py-3">
+              status
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Action
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (delivery of deliveries; track $index) {
+              <tr class="bg-white border-b ">
+                <td class="px-6 py-4">
+                  {{delivery.delivery_id}}
+                </td>
+                <td class="px-6 py-4">
+                  {{ delivery.package_id.package_id }}
+                </td>
+                <td class="px-6 py-4">
+                  {{ delivery.start_time | date: 'MMM d, y h:mm:ss a' }}
+                </td>
+                <td class="px-6 py-4">
+                  {{ delivery.end_time | date: 'MMM d, y h:mm:ss a' }}
+                </td>
+                <td class="px-6 py-4">
+                  {{ delivery.pickup_time | date: 'MMM d, y h:mm:ss a' }}
+                </td>
+                <td class="px-6 py-4">
+                  {{ deliveryStatus(delivery.status)  }}
+                </td>
+                <td class="px-6 py-4">
+                  <mat-icon (click)="onDeleteDelivery(delivery.delivery_id || '')" class="cursor-pointer"  color="warn" aria-hidden="false" title="delete package" aria-label="Example home icon" fontIcon="delete"></mat-icon>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p class="text-center">No Delivries...</p>
+      }
+
+    </div>
+  </div>
+</div>
+
+<ng-template #addPackageModal>
+  <div class="p-4 bg-white">
+    <p class="text-xl font-semibold flex-1">
+      @if(editMode){
+        Edit Package
+      } @else {
+        Add Package
+      }
+    </p>
+    <form #packageForm="ngForm">
+      <div class="mb-4 flex flex-col gap-2 ">
+        <label class="font-semibold">sender Information</label>
+        <div class="flex gap-2">
+          <div class="flex flex-col w-full">
+            <label> name: </label>
+            <input type="text" name="sender"
+                   [(ngModel)]="package.from_name"
+                   class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
+                   placeholder="sender name" required minlength="3">          </div>
+
+          <div class="flex flex-col w-full">
+            <label> address: </label>
+          <input type="text" name="sender_address"
+                 [(ngModel)]="package.from_address"
+                 class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
+                 placeholder="sender address" required minlength="3">
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <input type="text" name="sender_lat"
+                 [(ngModel)]="package.from_location.lat"
+                 class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
+                 placeholder="Lat" required>
+          <input type="text" name="sender_lng"
+                 [(ngModel)]="package.from_location.lng"
+                 class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
+                 placeholder="Lng" required>
+        </div>
+
+      </div>
+      <div class="mb-4 flex flex-col gap-2 ">
+        <label class="font-semibold">receiver Information</label>
+        <div class="flex gap-2">
+          <div class="flex flex-col w-full">
+            <label>name: </label>
+          <input type="text" name="receiver"
+                 [(ngModel)]="package.to_name"
+                 class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
+                 placeholder="receiver name" required minlength="3">
+          </div>
+          <div class="flex flex-col w-full">
+            <label>address: </label>
+          <input type="text" name="receiver_address"
+                 [(ngModel)]="package.to_address"
+                 class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
+                 placeholder="receiver address" required minlength="3">
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <input type="text" name="receiver_lat"
+                 [(ngModel)]="package.to_location.lat"
+                 class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
+                 placeholder="Lat">
+          <input type="text" name="receiver_lng"
+                 [(ngModel)]="package.to_location.lng"
+                 class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
+                 placeholder="Lng">
+        </div>
+      </div>
+      <div class="flex flex-col w-full">
+        <label>description: </label>
+      <input type="text" name="description"
+             [(ngModel)]="package.description"
+             class="mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
+             placeholder="describe the package" minlength="3" required>
+      </div>
+      <div class="mb-2 flex gap-2">
+        <div class="flex flex-col w-full">
+          <label>weight: </label>
+        <input type="number" name="weight"
+               [(ngModel)]="package.weight"
+               class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
+               placeholder="weight in grams" required>
+        </div>
+        <div class="flex flex-col w-full">
+          <label>width: </label>
+        <input type="number" name="width"
+               [(ngModel)]="package.width"
+               class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
+               placeholder="width in cm" required>
+        </div>
+      </div>
+      <div class="mb-2 flex gap-2">
+        <div class="flex flex-col w-full">
+          <label>height: </label>
+        <input type="number" name="height"
+               [(ngModel)]="package.height"
+               class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
+               placeholder="height in cm" required>
+        </div>
+        <div class="flex flex-col w-full" required>
+          <label>depth: </label>
+        <input type="number" name="depth"
+               [(ngModel)]="package.depth"
+               class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
+               placeholder="dept in cm" required>
+        </div>
+      </div>
+
+
+    </form>
+
+
+    <div class="flex justify-end gap-2 mt-3">
+      @if(savingPackage){
+        <mat-spinner class="mx-auto"></mat-spinner>
+      } @else {
+        <div
+          class="text-gray-500 cursor-pointer py-2 px-3"
+          (click)="closeaddPackageDialog()"
+        >
+          Annuler
+        </div>
+        <button (click)="onSavePackage()"  [disabled]="!packageForm.valid || savingPackage"
+                class="rounded bg-green-700 text-white text-center shadow disabled:bg-gray-300 hover:bg-purple-300 cursor-pointer hover:text-primary px-3 py-2">
+          Enregistrer
+        </button>
+      }
+
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #addDeliveryModal>
+  <div class="p-4 bg-white">
+    <p class="text-xl font-semibold flex-1">Add Delivery</p>
+    <form #deliveryForm="ngForm">
+    <div class="">
+      <label  class="block mb-2 text-sm font-medium text-gray-900 ">Select a package
+      </label>
+      <select
+        name="package_id" [(ngModel)]="delivery.package_id"
+              class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required>
+        @for (package of packages; track $index) {
+        <option selected>Choose a package</option>
+        <option value="{{package.package_id}}">{{ package._id }}</option>
+        }
+      </select>
+    </div>
+    </form>
+
+    <div class="flex justify-end gap-2 mt-3">
+      @if(savingDelivery){
+        <mat-spinner class="mx-auto"></mat-spinner>
+      } @else {
+        <div
+          class="text-gray-500 cursor-pointer py-2 px-3"
+          (click)="closeaddDeliveryDialog()"
+        >
+          Annuler
+        </div>
+        <button (click)="onSaveDelivery()"  [disabled]="!deliveryForm.valid || savingDelivery"
+                class="rounded bg-green-700 text-white text-center shadow disabled:bg-gray-300 hover:bg-purple-300 cursor-pointer hover:text-primary px-3 py-2">
+          Enregistrer
+        </button>
+      }
+
+    </div>
+  </div>
+</ng-template>
