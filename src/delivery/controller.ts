@@ -124,15 +124,15 @@ export async function updateDelivery(
 
         if(req.body.status === EDeliveryStatus.picked){
             delivery.pickup_time = new Date();
+        }
+        if(req.body.status === EDeliveryStatus.transit){
             delivery.start_time = new Date();
         }
     
-        if(req.body.status === EDeliveryStatus.delivered){
+        if(req.body.status === EDeliveryStatus.delivered || req.body.status === EDeliveryStatus.failed){
             delivery.end_time = new Date();
         }
-        if(req.body.status === EDeliveryStatus.failed){
-            delivery.end_time = new Date();
-        }
+      
         delivery.status = req.body.status;
         //delivery.location = {lng: req.body.location.lng, lat: req.body.location.lat};
 

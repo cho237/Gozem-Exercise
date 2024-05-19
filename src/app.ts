@@ -5,6 +5,9 @@ import packageRoutes from "./package/routes";
 import cors from "cors";
 import * as mongoose from "mongoose";
 import dotenv from "dotenv";
+import { getIo, initSocket } from "./utils/socket";
+import { Delivery, IDelivery } from "./delivery/models";
+import { Ilatlng } from "./utils/model";
 dotenv.config();
 
 
@@ -27,8 +30,31 @@ app.use((error: any, req: any, res: any, next: any) => {
 });
 
 mongoose.connect(process.env.DB_LOCAL || "").then(result=>{
-  console.log("connected")
-  app.listen(process.env.port || 5000)
+ const server =  app.listen(process.env.port || 5000, ()=> {
+  console.log("server is running on port 5000");
+ })
+ initSocket(server).on('connection',(socket)=>{
+  console.log('socket connection from', socket.id)
+  socket.on('location_changed', async(deliveryId:string, location:Ilatlng)=>{
+    const delivery = await Delivery.findOne({
+      delivery_id: deliveryId
+    }).populate('package_id')
+    if(delivery){
+      if(delivery.location.lat !== location.lat || delivery.location.lng !== location.lng){
+       delivery.location.lat = location.lat;
+       delivery.location.lng = location.lng;
+       await delivery.save();
+       socket.broadcast.emit("delivery_updated", delivery)
+      }
+    }    
+  })
+
+  socket.on('status_changed', async(deliveryId:string, status:Number)=>{
+    const delivery = await Delivery.findOne({delivery_id:deliveryId}).populate("package_id")
+    socket.broadcast.emit("delivery_updated", delivery)
+  })
+
+ })
 }).catch(err=>{
   console.log(err);
 })
