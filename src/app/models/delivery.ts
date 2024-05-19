@@ -1,5 +1,5 @@
 import {Ilatlng} from "../utils/models";
-import {IPackage} from "./package";
+
 
 export interface IDelivery {
   delivery_id?: string,
@@ -12,6 +12,11 @@ export interface IDelivery {
 }
 
 export enum EDeliveryStatus {
-  opened, picked, transit,  delivered, failed
+  opened, picked, transit, delivered, failed
 }
 
+export enum socketConnection  {
+  changedLocation='location_changed',
+  updatedDelivery = 'delivery_updated',
+  statusChanged = 'status_changed'
+}
