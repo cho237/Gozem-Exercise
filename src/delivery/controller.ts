@@ -7,11 +7,6 @@ import {validationResult} from "express-validator";
 import {Package} from "../package/models";
 import {v4 as uuid_v4} from "uuid";
 import logger from "../utils/logger";
-import mongoose from "mongoose";
-
-
-
-
 
 export async function allDeliveries(
     req: IAuthReq,

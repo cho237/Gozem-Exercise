@@ -44,3 +44,9 @@ export interface ICustomReq {
     limit: number,
     search:string
 }
+export enum socketConnection  {
+    changedLocation='location_changed',
+    updatedDelivery = 'delivery_updated',
+    statusChanged = 'status_changed'
+  }
+  
