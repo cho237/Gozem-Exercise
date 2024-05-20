@@ -58,8 +58,28 @@
 
       </div>
     </div>
-    <div *ngIf="package.active_delivery_id" class="w-full border">map</div>
+    <div *ngIf="package.active_delivery_id" class="w-full border">
+    
+        <google-map
+          *ngIf="package"
+          [options]="options"
+          height="100%"
+          width="100%"    
+        >
+        @for (location of markers; track location; let index = $index) {
+          <map-advanced-marker
+            #markerElem="mapAdvancedMarker"
+            [position]="{ lat: location.lat, lng: location.lng }"
+            [title]="'Location ' + (index + 1)"
+          
+          />
+          }
+        </google-map>
+
+    </div>
   </div>
 }
 <p class="text-center p-4 " *ngIf="!loading && !package">{{ message }}</p>
-<mat-spinner *ngIf="loading" class=" mx-auto text-sm mt-4"></mat-spinner>
+<mat-spinner *ngIf="loading" class=" mx-auto text-sm mt-4">
+
+</mat-spinner>

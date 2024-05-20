@@ -82,7 +82,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     socket.on(socketConnection.updatedDelivery, (delivery: IDelivery) => {
-      console.log(delivery)
+    
       const index = this.deliveries.findIndex(
         (d) => d.delivery_id === delivery.delivery_id
       );
