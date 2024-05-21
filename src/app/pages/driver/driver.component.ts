@@ -1,8 +1,4 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { DatePipe, NgIf } from '@angular/common';
 import { IPackage } from '../../models/package';
@@ -14,9 +10,7 @@ import { DeliveryService } from '../../services/delivery.service';
 import io from 'socket.io-client';
 import { EDeliveryStatus, socketConnection } from '../../models/delivery';
 import { Ilatlng } from '../../utils/models';
-import {
-  GoogleMapsModule,
-} from '@angular/google-maps';
+import { GoogleMapsModule } from '@angular/google-maps';
 
 const socket = io('http://localhost:5000');
 
@@ -28,10 +22,11 @@ const socket = io('http://localhost:5000');
   styleUrl: './driver.component.css',
 })
 export class DriverComponent implements OnDestroy, OnInit {
+  
   options: google.maps.MapOptions = {
     mapId: 'DEMO_MAP_ID',
-    center:  { lat: 3.8600704, lng: 11.5212288 },
-    zoom: 4,
+    center: { lat: 3.8600704, lng: 11.5212288 },
+    zoom: 2,
   };
 
   markers: any[] = [];
@@ -99,16 +94,28 @@ export class DriverComponent implements OnDestroy, OnInit {
       this.packageService.detailsPackage(this.packageId).subscribe({
         next: (package_) => {
           if (package_.active_delivery_id) {
+            const home = '../../../assets/home.png';
+            const beachFlag =
+              'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+            let imgTag1 = document.createElement('img');
+            let imgTag2 = document.createElement('img');
+            imgTag1.src = home;
+            imgTag2.src = beachFlag;
             let markers = [
               {
                 lat: +package_.from_location.lat,
                 lng: +package_.from_location.lng,
+                content: imgTag1,
               },
               {
                 lat: +package_.to_location.lat,
                 lng: +package_.to_location.lng,
+                content: imgTag2,
               },
             ];
+
+            console.log(markers)
+
             this.markers = [...markers];
             if (package_.active_delivery_id.location) {
               this.markers.push({

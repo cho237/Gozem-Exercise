@@ -27,7 +27,7 @@ export class HomeComponent implements OnDestroy, OnInit {
   options: google.maps.MapOptions = {
     mapId: 'DEMO_MAP_ID',
     center: { lat: 3.8600704, lng: 11.5212288 },
-    zoom: 4,
+    zoom: 2,
   };
   markers: any[] = [];
 
@@ -38,7 +38,6 @@ export class HomeComponent implements OnDestroy, OnInit {
   ) {}
   ngOnInit(): void {
     socket.on(socketConnection.updatedDelivery, (delivery: IDelivery) => {
-
       this.ngZone.run(() => {
         if (this.package?.active_delivery_id) {
           this.package.active_delivery_id = delivery;
@@ -77,14 +76,25 @@ export class HomeComponent implements OnDestroy, OnInit {
         next: (package_) => {
           this.package = package_;
           this.loading = false;
+
+          const home = '../../../assets/home.png';
+          const beachFlag =
+            'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+          let imgTag1 = document.createElement('img');
+          let imgTag2 = document.createElement('img');
+          imgTag1.src = home;
+          imgTag2.src = beachFlag;
+
           let markers = [
             {
               lat: +package_.from_location.lat,
               lng: +package_.from_location.lng,
+              content: imgTag1,
             },
             {
               lat: +package_.to_location.lat,
               lng: +package_.to_location.lng,
+              content: imgTag2,
             },
           ];
           this.markers = [...markers];
