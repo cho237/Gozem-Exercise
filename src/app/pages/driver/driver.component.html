@@ -137,9 +137,9 @@
     </div>
   </div>
 
-  <div #demoMap  id="map" class="w-3/6 border">
+  <div #demoMap *ngIf="package.active_delivery_id" id="map" class="w-3/6 border">
     <google-map
-      *ngIf="package"
+      *ngIf="package.active_delivery_id"
       [options]="options"
       height="100%"
       width="100%"    
@@ -152,17 +152,7 @@
         [content]="location.content"
       />
       }
-      <!-- <map-advanced-marker [position]="source" [title]="'Source'"></map-advanced-marker> -->
-
-      <!-- <map-advanced-marker
-        [position]="position"
-        title="position">
-      </map-advanced-marker> -->
-
-      <!-- <map-advanced-marker
-        [position]="destination"
-        title="3.8436864">
-      </map-advanced-marker> -->
+     
     </google-map>
   </div>
 

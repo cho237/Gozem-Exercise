@@ -61,7 +61,7 @@
     <div *ngIf="package.active_delivery_id" class="w-full border">
   
         <google-map
-          *ngIf="package"
+          *ngIf="package.active_delivery_id"
           [options]="options"
           height="100%"
           width="100%"    

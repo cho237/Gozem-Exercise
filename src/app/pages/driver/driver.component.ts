@@ -22,7 +22,7 @@ const socket = io('http://localhost:5000');
   styleUrl: './driver.component.css',
 })
 export class DriverComponent implements OnDestroy, OnInit {
-  
+
   options: google.maps.MapOptions = {
     mapId: 'DEMO_MAP_ID',
     center: { lat: 3.8600704, lng: 11.5212288 },
@@ -113,8 +113,6 @@ export class DriverComponent implements OnDestroy, OnInit {
                 content: imgTag2,
               },
             ];
-
-            console.log(markers)
 
             this.markers = [...markers];
             if (package_.active_delivery_id.location) {

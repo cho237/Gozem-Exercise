@@ -10,7 +10,7 @@ import { GoogleMapsModule } from '@angular/google-maps';
 import io from 'socket.io-client';
 import { IDelivery, socketConnection } from '../../models/delivery';
 
-const socket = io('http://localhost:5000');
+
 
 @Component({
   selector: 'app-home',
@@ -19,7 +19,8 @@ const socket = io('http://localhost:5000');
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent implements OnDestroy, OnInit {
+export class HomeComponent implements OnDestroy {
+
   loading = false;
   package?: IPackage;
   subs = new Subscription();
@@ -30,13 +31,16 @@ export class HomeComponent implements OnDestroy, OnInit {
     zoom: 2,
   };
   markers: any[] = [];
+  packageId = '';
 
   constructor(
     private packageService: PackageService,
     private notificationService: NotificationService,
     private ngZone: NgZone
   ) {}
-  ngOnInit(): void {
+
+  socketConnection(){
+    const socket = io('http://localhost:5000');
     socket.on(socketConnection.updatedDelivery, (delivery: IDelivery) => {
       this.ngZone.run(() => {
         if (this.package?.active_delivery_id) {
@@ -64,7 +68,8 @@ export class HomeComponent implements OnDestroy, OnInit {
     });
   }
 
-  packageId = '';
+
+  
 
   onSeach() {
     if (this.packageId === '') {
@@ -77,6 +82,8 @@ export class HomeComponent implements OnDestroy, OnInit {
           this.package = package_;
           this.loading = false;
 
+          if(package_.active_delivery_id) this.socketConnection()
+          
           const home = '../../../assets/home.png';
           const beachFlag =
             'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
@@ -98,7 +105,7 @@ export class HomeComponent implements OnDestroy, OnInit {
             },
           ];
           this.markers = [...markers];
-          if (package_.active_delivery_id.location) {
+          if (package_.active_delivery_id && package_.active_delivery_id.location) {
             this.markers.push({
               lat: +package_.active_delivery_id.location.lat,
               lng: +package_.active_delivery_id.location.lng,
